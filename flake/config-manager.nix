@@ -169,7 +169,7 @@ in {
         inherit overlays;
         modules = {
           inherit (modules) global users;
-          inherit (modules.home) config shared;
+          inherit (modules.home) config system;
         };
       };
     };
@@ -185,7 +185,7 @@ in {
         inherit overlays;
         modules = {
           inherit (modules) global users;
-          inherit (modules.darwin) config shared;
+          inherit (modules.darwin) config system;
         };
       };
     };
@@ -201,7 +201,7 @@ in {
         inherit overlays;
         modules = {
           inherit (modules) global users;
-          inherit (modules.nixos) config shared;
+          inherit (modules.nixos) config system;
         };
       };
     };
