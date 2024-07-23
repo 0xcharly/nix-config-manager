@@ -135,13 +135,14 @@
   };
 
   mkImportsOptions = let
-    mkModuleDirectoryOption = description: mkOption {
-      default = {};
-      type = types.attrsOf types.raw;
-      internal = true;
-      visible = false;
-      inherit description;
-    };
+    mkModuleDirectoryOption = description:
+      mkOption {
+        default = {};
+        type = types.attrsOf types.raw;
+        internal = true;
+        visible = false;
+        inherit description;
+      };
   in {
     overlays = mkOption {
       default = [];
@@ -152,14 +153,22 @@
         The list of overlays to carry over and apply to the importing config.
       '';
     };
-    homeConfigModules = mkModuleDirectoryOption ''TODO'';
-    homeSharedModules = mkModuleDirectoryOption ''TODO'';
-    darwinConfigModules = mkModuleDirectoryOption ''TODO'';
-    darwinSharedModules = mkModuleDirectoryOption ''TODO'';
-    nixosConfigModules = mkModuleDirectoryOption ''TODO'';
-    nixosSharedModules = mkModuleDirectoryOption ''TODO'';
-    globalModules = mkModuleDirectoryOption ''TODO'';
-    usersModules = mkModuleDirectoryOption ''TODO'';
+    modules = {
+      home = {
+        config = mkModuleDirectoryOption ''TODO'';
+        shared = mkModuleDirectoryOption ''TODO'';
+      };
+      darwin = {
+        configModules = mkModuleDirectoryOption ''TODO'';
+        sharedModules = mkModuleDirectoryOption ''TODO'';
+      };
+      nixos = {
+        configModules = mkModuleDirectoryOption ''TODO'';
+        sharedModules = mkModuleDirectoryOption ''TODO'';
+      };
+      globals = mkModuleDirectoryOption ''TODO'';
+      users = mkModuleDirectoryOption ''TODO'';
+    };
   };
 
   mkDefaultOptions = options: let
