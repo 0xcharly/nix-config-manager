@@ -166,9 +166,16 @@ in {
       usersModules = crawlModuleDir cfg.usersModulesDirectory;
       importedModules = with cfg.imports; {
         # TODO: consider moving `overlays` out of the `importedModules`.
-        inherit overlays globalModules usersModules;
-        configModules = homeConfigModules;
-        systemModules = homeSharedModules;
+        inherit overlays;
+        globalModules = modules.globals;
+        usersModules = modules.users;
+        configModules = modules.home.config;
+        systemModules = modules.home.shared;
+
+        # modules = {
+        #   inherit (modules) globals users;
+        #   inherit (modules.home) config shared;
+        # };
       };
     };
 
@@ -181,9 +188,16 @@ in {
       usersModules = crawlModuleDir cfg.usersModulesDirectory;
       importedModules = with cfg.imports; {
         # TODO: consider moving `overlays` out of the `importedModules`.
-        inherit overlays globalModules usersModules;
-        configModules = darwinConfigModules;
-        systemModules = darwinSharedModules;
+        inherit overlays;
+        globalModules = modules.globals;
+        usersModules = modules.users;
+        configModules = modules.darwin.config;
+        systemModules = modules.darwin.shared;
+
+        # modules = {
+        #   inherit (modules) globals users;
+        #   inherit (modules.darwin) config shared;
+        # };
       };
     };
 
@@ -196,9 +210,16 @@ in {
       usersModules = crawlModuleDir cfg.usersModulesDirectory;
       importedModules = with cfg.imports; {
         # TODO: consider moving `overlays` out of the `importedModules`.
-        inherit overlays globalModules usersModules;
-        configModules = nixosConfigModules;
-        systemModules = nixosSharedModules;
+        inherit overlays;
+        globalModules = modules.globals;
+        usersModules = modules.users;
+        configModules = modules.nixos.config;
+        systemModules = modules.nixos.shared;
+
+        # modules = {
+        #   inherit (modules) globals users;
+        #   inherit (modules.nixos) config shared;
+        # };
       };
     };
 
@@ -208,15 +229,23 @@ in {
 
     config-manager = lib.mkIf (!cfg.final) {
       overlays = cfg.overlays;
-      homeConfigModules = crawlModuleDir cfg.home.configModulesDirectory;
-      homeSharedModules = crawlModuleDir cfg.home.sharedModulesDirectory;
-      darwinConfigModules = crawlModuleDir cfg.darwin.configModulesDirectory;
-      darwinSharedModules = crawlModuleDir cfg.darwin.sharedModulesDirectory;
-      nixosConfigModules = crawlModuleDir cfg.nixos.configModulesDirectory;
-      nixosSharedModules = crawlModuleDir cfg.nixos.sharedModulesDirectory;
-      globalModules = crawlModuleDir cfg.globalModulesDirectory;
-      # TODO: consider if `usersModules` should even be exported here?
-      usersModules = crawlModuleDir cfg.usersModulesDirectory;
+      modules = {
+        home = {
+          config = crawlModuleDir cfg.home.configModulesDirectory;
+          shared = crawlModuleDir cfg.home.sharedModulesDirectory;
+        };
+        darwin = {
+          config = crawlModuleDir cfg.darwin.configModulesDirectory;
+          shared = crawlModuleDir cfg.darwin.sharedModulesDirectory;
+        };
+        nixos = {
+          config = crawlModuleDir cfg.nixos.configModulesDirectory;
+          shared = crawlModuleDir cfg.nixos.sharedModulesDirectory;
+        };
+        globals = crawlModuleDir cfg.globalModulesDirectory;
+        # TODO: consider if `usersModules` should even be exported here?
+        users = crawlModuleDir cfg.usersModulesDirectory;
+      };
     };
   };
 }
