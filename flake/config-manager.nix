@@ -206,10 +206,6 @@ in {
       };
     };
 
-    # NOTE: for debug purposes only.
-    # TODO: remove once the options structure is final~ish.
-    inherit cfg;
-
     config-manager = lib.mkIf (!cfg.final) {
       overlays = cfg.overlays;
       modules = {
