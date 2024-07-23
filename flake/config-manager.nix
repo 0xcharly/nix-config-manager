@@ -40,7 +40,7 @@
     systemModules, # The list of user-provided modules under home-shared-modules/ injected in each home configuration module.
     globalModules, # The list of user-provided utility modules under globals/ injected into all configuration modules.
     usersModules, # The list of user-provided user modules under users/ injected into all system configuration modules.
-    importedModules, # The list of user-provided modules passed to this config via the `imports` option.
+    imports, # The list of user-provided imports passed to this config via the `imports` option.
   }:
     lib.mapAttrs (name: hmConfigModule: let
       host = hosts.${name} or defaults;
@@ -57,8 +57,8 @@
         pkgs = import requireNixpkgsInput {inherit system;};
         extraSpecialArgs = {
           inherit inputs;
-          globalModules = globalModules // importedModules.globalModules;
-          systemModules = systemModules // importedModules.systemModules;
+          globalModules = globalModules // imports.modules.global;
+          systemModules = systemModules // imports.modules.system;
         };
         # NOTE: automatically backing up existing files is currently unsupported
         # for standalone home-manager setups.
@@ -68,21 +68,22 @@
         # backupFileExtension = cfg.backupFileExtension;
         modules = [
           # System options.
-          {nixpkgs.overlays = cfg.overlays ++ importedModules.overlays;}
+          {nixpkgs.overlays = cfg.overlays ++ imports.overlays;}
 
           # Default home-manager configuration, if any.
           systemModules.default or {}
           # Default imported home-manager configuration, if any.
-          importedModules.systemModules.default or {}
+          imports.modules.system.default or {}
 
           # home-manager configuration.
           hmConfigModule
           configModules.default or {}
+          imports.modules.config.default or {}
 
           # User configuration.
           # TODO: consider failing if the user configuration and default are both missing.
           usersModules.${user} or usersModules.default or {}
-          importedModules.usersModules.${user} or importedModules.usersModules.default or {}
+          imports.modules.users.${user} or imports.modules.users.default or {}
         ];
       }))
     configModules;
@@ -98,7 +99,7 @@
     systemModules, # The list of user-provided modules under (darwin|nixos)-shared-modules/ injected in each system configuration module.
     globalModules, # The list of user-provided utility modules under globals/ injected into all configuration modules.
     usersModules, # The list of user-provided user modules under users/ injected into all system configuration modules.
-    importedModules, # The list of user-provided modules passed to this config via the `imports` option.
+    imports, # The list of user-provided imports passed to this config via the `imports` option.
   }:
     lib.mapAttrs (hostname: systemConfigModule: let
       host = hosts.${hostname} or defaults;
@@ -107,29 +108,29 @@
       mkSystem {
         specialArgs = {
           inherit inputs host;
-          globalModules = globalModules // importedModules.globalModules;
-          systemModules = systemModules // importedModules.systemModules;
+          globalModules = globalModules // imports.modules.global;
+          systemModules = systemModules // imports.modules.system;
         };
         modules = [
           # System options.
-          {nixpkgs.overlays = cfg.overlays ++ importedModules.overlays;}
+          {nixpkgs.overlays = cfg.overlays ++ imports.overlays;}
 
           # Default system configuration, if any.
           systemModules.default or {}
           # Default imported system configuration, if any.
-          importedModules.systemModules.default or {}
+          imports.modules.system.default or {}
 
           # System configuration.
           systemConfigModule
           configModules.default or {}
-          importedModules.configModules.default or {}
+          imports.modules.config.default or {}
 
           # User configuration.
           mkSystemHomeManagerModule
           {
             home-manager.extraSpecialArgs = {
               inherit inputs;
-              globalModules = globalModules // importedModules.globalModules;
+              globalModules = globalModules // imports.modules.global;
             };
             home-manager.useGlobalPkgs = true;
             home-manager.useUserPackages = true;
@@ -137,7 +138,7 @@
             # TODO: consider failing if the user configuration and default are both missing.
             home-manager.users.${user}.imports = [
               usersModules.${user} or usersModules.default or {}
-              importedModules.usersModules.${user} or importedModules.usersModules.default or {}
+              imports.modules.users.${user} or imports.modules.users.default or {}
             ];
           }
         ];
@@ -164,18 +165,12 @@ in {
       systemModules = crawlModuleDir cfg.home.sharedModulesDirectory;
       globalModules = crawlModuleDir cfg.globalModulesDirectory;
       usersModules = crawlModuleDir cfg.usersModulesDirectory;
-      importedModules = with cfg.imports; {
-        # TODO: consider moving `overlays` out of the `importedModules`.
+      imports = with cfg.imports; {
         inherit overlays;
-        globalModules = modules.globals;
-        usersModules = modules.users;
-        configModules = modules.home.config;
-        systemModules = modules.home.shared;
-
-        # modules = {
-        #   inherit (modules) globals users;
-        #   inherit (modules.home) config shared;
-        # };
+        modules = {
+          inherit (modules) global users;
+          inherit (modules.home) config shared;
+        };
       };
     };
 
@@ -186,18 +181,12 @@ in {
       systemModules = crawlModuleDir cfg.darwin.sharedModulesDirectory;
       globalModules = crawlModuleDir cfg.globalModulesDirectory;
       usersModules = crawlModuleDir cfg.usersModulesDirectory;
-      importedModules = with cfg.imports; {
-        # TODO: consider moving `overlays` out of the `importedModules`.
+      imports = with cfg.imports; {
         inherit overlays;
-        globalModules = modules.globals;
-        usersModules = modules.users;
-        configModules = modules.darwin.config;
-        systemModules = modules.darwin.shared;
-
-        # modules = {
-        #   inherit (modules) globals users;
-        #   inherit (modules.darwin) config shared;
-        # };
+        modules = {
+          inherit (modules) global users;
+          inherit (modules.darwin) config shared;
+        };
       };
     };
 
@@ -208,18 +197,12 @@ in {
       systemModules = crawlModuleDir cfg.nixos.sharedModulesDirectory;
       globalModules = crawlModuleDir cfg.globalModulesDirectory;
       usersModules = crawlModuleDir cfg.usersModulesDirectory;
-      importedModules = with cfg.imports; {
-        # TODO: consider moving `overlays` out of the `importedModules`.
+      imports = with cfg.imports; {
         inherit overlays;
-        globalModules = modules.globals;
-        usersModules = modules.users;
-        configModules = modules.nixos.config;
-        systemModules = modules.nixos.shared;
-
-        # modules = {
-        #   inherit (modules) globals users;
-        #   inherit (modules.nixos) config shared;
-        # };
+        modules = {
+          inherit (modules) global users;
+          inherit (modules.nixos) config shared;
+        };
       };
     };
 
@@ -232,17 +215,17 @@ in {
       modules = {
         home = {
           config = crawlModuleDir cfg.home.configModulesDirectory;
-          shared = crawlModuleDir cfg.home.sharedModulesDirectory;
+          system = crawlModuleDir cfg.home.sharedModulesDirectory;
         };
         darwin = {
           config = crawlModuleDir cfg.darwin.configModulesDirectory;
-          shared = crawlModuleDir cfg.darwin.sharedModulesDirectory;
+          system = crawlModuleDir cfg.darwin.sharedModulesDirectory;
         };
         nixos = {
           config = crawlModuleDir cfg.nixos.configModulesDirectory;
-          shared = crawlModuleDir cfg.nixos.sharedModulesDirectory;
+          system = crawlModuleDir cfg.nixos.sharedModulesDirectory;
         };
-        globals = crawlModuleDir cfg.globalModulesDirectory;
+        global = crawlModuleDir cfg.globalModulesDirectory;
         # TODO: consider if `usersModules` should even be exported here?
         users = crawlModuleDir cfg.usersModulesDirectory;
       };

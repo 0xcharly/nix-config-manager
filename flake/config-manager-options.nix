@@ -156,17 +156,17 @@
     modules = {
       home = {
         config = mkModuleDirectoryOption ''TODO'';
-        shared = mkModuleDirectoryOption ''TODO'';
+        system = mkModuleDirectoryOption ''TODO'';
       };
       darwin = {
         config = mkModuleDirectoryOption ''TODO'';
-        shared = mkModuleDirectoryOption ''TODO'';
+        system = mkModuleDirectoryOption ''TODO'';
       };
       nixos = {
         config = mkModuleDirectoryOption ''TODO'';
-        shared = mkModuleDirectoryOption ''TODO'';
+        system = mkModuleDirectoryOption ''TODO'';
       };
-      globals = mkModuleDirectoryOption ''TODO'';
+      global = mkModuleDirectoryOption ''TODO'';
       users = mkModuleDirectoryOption ''TODO'';
     };
   };
