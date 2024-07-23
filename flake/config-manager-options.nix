@@ -159,12 +159,12 @@
         shared = mkModuleDirectoryOption ''TODO'';
       };
       darwin = {
-        configModules = mkModuleDirectoryOption ''TODO'';
-        sharedModules = mkModuleDirectoryOption ''TODO'';
+        config = mkModuleDirectoryOption ''TODO'';
+        shared = mkModuleDirectoryOption ''TODO'';
       };
       nixos = {
-        configModules = mkModuleDirectoryOption ''TODO'';
-        sharedModules = mkModuleDirectoryOption ''TODO'';
+        config = mkModuleDirectoryOption ''TODO'';
+        shared = mkModuleDirectoryOption ''TODO'';
       };
       globals = mkModuleDirectoryOption ''TODO'';
       users = mkModuleDirectoryOption ''TODO'';
