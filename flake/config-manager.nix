@@ -226,7 +226,6 @@ in {
           system = crawlModuleDir cfg.nixos.sharedModulesDirectory;
         };
         global = crawlModuleDir cfg.globalModulesDirectory;
-        # TODO: consider if `usersModules` should even be exported here?
         users = crawlModuleDir cfg.usersModulesDirectory;
       };
     };
