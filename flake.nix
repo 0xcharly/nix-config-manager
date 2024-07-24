@@ -25,14 +25,21 @@
       url = "github:hercules-ci/flake-parts";
       inputs.nixpkgs-lib.follows = "nixpkgs";
     };
-    pre-commit-hooks-nix.url = "github:cachix/pre-commit-hooks.nix";
-    treefmt-nix.url = "github:numtide/treefmt-nix";
+    git-hooks-nix = {
+      url = "github:cachix/git-hooks.nix";
+      inputs.nixpkgs.follows = "nixpkgs-unstable";
+      inputs.nixpkgs-stable.follows = "nixpkgs";
+    };
+    treefmt-nix = {
+      url = "github:numtide/treefmt-nix";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
   outputs = inputs @ {flake-parts, ...}:
     flake-parts.lib.mkFlake {inherit inputs;} {
       imports = [
-        inputs.pre-commit-hooks-nix.flakeModule
+        inputs.git-hooks-nix.flakeModule
         inputs.treefmt-nix.flakeModule
 
         ./flake/cmd-fmt.nix
