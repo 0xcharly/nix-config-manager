@@ -155,15 +155,15 @@
     };
     modules = {
       home = {
-        config = mkModuleDirectoryOption ''TODO'';
+        hosts = mkModuleDirectoryOption ''TODO'';
         shared = mkModuleDirectoryOption ''TODO'';
       };
       darwin = {
-        config = mkModuleDirectoryOption ''TODO'';
+        hosts = mkModuleDirectoryOption ''TODO'';
         shared = mkModuleDirectoryOption ''TODO'';
       };
       nixos = {
-        config = mkModuleDirectoryOption ''TODO'';
+        hosts = mkModuleDirectoryOption ''TODO'';
         shared = mkModuleDirectoryOption ''TODO'';
       };
       global = mkModuleDirectoryOption ''TODO'';
