@@ -36,11 +36,11 @@
   mkHomeConfigurations = {
     hosts, # The list of user-defined hosts (i.e. from the flake config).
     defaults, # Default configuration values.
-    modules, # The list of user-provided modules (configuration and shared) under (darwin|nixos)-(config|shared)-modules/
+    modules, # The list of user-provided modules (configuration and shared) under home-(host|shared)-modules/
     imports, # The list of user-provided imports passed to this config via the `imports` option.
   }:
-    lib.mapAttrs (name: hmConfigModule: let
-      host = hosts.${name} or defaults;
+    lib.mapAttrs (hostname: hostModule: let
+      host = hosts.${hostname} or defaults;
       inherit (host) system user;
 
       supportedSystems = [
@@ -55,7 +55,7 @@
         extraSpecialArgs = {
           inherit inputs;
           globalModules = modules.global // imports.modules.global;
-          systemModules = modules.system // imports.modules.system;
+          sharedModules = modules.shared // imports.modules.shared;
         };
         # NOTE: automatically backing up existing files is currently unsupported
         # for standalone home-manager setups.
@@ -68,16 +68,16 @@
           {nixpkgs.overlays = cfg.overlays ++ imports.overlays;}
 
           # Default home-manager shared module, if any.
-          modules.system.default or {}
+          modules.shared.default or {}
           # Default imported home-manager shared module, if any.
-          imports.modules.system.default or {}
+          imports.modules.shared.default or {}
 
           # home-manager configuration.
-          hmConfigModule
+          hostModule
           # Default home-manager configuration module, if any.
-          modules.config.default or {}
+          modules.hosts.default or {}
           # Default imported home-manager configuration module, if any.
-          imports.modules.config.default or {}
+          imports.modules.hosts.default or {}
 
           # User configuration.
           # TODO: consider failing if the user configuration and default are both missing.
@@ -85,19 +85,19 @@
           imports.modules.users.${user} or imports.modules.users.default or {}
         ];
       }))
-    modules.config;
+    modules.hosts;
 
   # Creates specialized configuration factory functions.
   mkMkSystemConfigurations = {
     mkSystem,
-    mkSystemHomeManagerModule,
+    mkHomeManager,
   }: {
     hosts, # The list of user-defined hosts (i.e. from the flake config).
     defaults, # Default configuration values.
-    modules, # The list of user-provided modules (configuration and shared) under (darwin|nixos)-(config|shared)-modules/
+    modules, # The list of user-provided modules (configuration and shared) under (darwin|nixos)-(host|shared)-modules/
     imports, # The list of user-provided imports passed to this config via the `imports` option.
   }:
-    lib.mapAttrs (hostname: configModule: let
+    lib.mapAttrs (hostname: hostModule: let
       host = hosts.${hostname} or defaults;
       inherit (host) user;
     in
@@ -105,26 +105,26 @@
         specialArgs = {
           inherit inputs host;
           globalModules = modules.global // imports.modules.global;
-          systemModules = modules.system // imports.modules.system;
+          sharedModules = modules.shared // imports.modules.shared;
         };
         modules = [
           # System options.
           {nixpkgs.overlays = cfg.overlays ++ imports.overlays;}
 
           # Default system shared module, if any.
-          modules.system.default or {}
+          modules.shared.default or {}
           # Default imported system shared modules, if any.
-          imports.modules.system.default or {}
+          imports.modules.shared.default or {}
 
           # System configuration.
-          configModule
+          hostModule
           # Default system configuration module, if any.
-          modules.config.default or {}
+          modules.hosts.default or {}
           # Default imported system configuration module, if any.
-          imports.modules.config.default or {}
+          imports.modules.hosts.default or {}
 
           # User configuration.
-          mkSystemHomeManagerModule
+          mkHomeManager
           {
             home-manager.extraSpecialArgs = {
               inherit inputs;
@@ -141,16 +141,16 @@
           }
         ];
       })
-    modules.config;
+    modules.hosts;
 
   mkDarwinConfigurations = mkMkSystemConfigurations {
     mkSystem = requireDarwinInput.lib.darwinSystem;
-    mkSystemHomeManagerModule = requireHomeManagerInput.darwinModules.home-manager;
+    mkHomeManager = requireHomeManagerInput.darwinModules.home-manager;
   };
 
   mkNixosConfigurations = mkMkSystemConfigurations {
     mkSystem = requireNixpkgsInput.lib.nixosSystem;
-    mkSystemHomeManagerModule = requireHomeManagerInput.nixosModules.home-manager;
+    mkHomeManager = requireHomeManagerInput.nixosModules.home-manager;
   };
 in {
   options = {inherit (options) config-manager;};
@@ -160,16 +160,16 @@ in {
       inherit (cfg.home) hosts;
       defaults = options.defaults.home;
       modules = {
-        config = crawlModuleDir cfg.home.configModulesDirectory;
-        system = crawlModuleDir cfg.home.sharedModulesDirectory;
-        global = crawlModuleDir cfg.globalModulesDirectory;
         users = crawlModuleDir cfg.usersModulesDirectory;
+        hosts = crawlModuleDir cfg.home.configModulesDirectory;
+        shared = crawlModuleDir cfg.home.sharedModulesDirectory;
+        global = crawlModuleDir cfg.globalModulesDirectory;
       };
       imports = with cfg.imports; {
         inherit overlays;
         modules = {
           inherit (modules) global users;
-          inherit (modules.home) config system;
+          inherit (modules.home) hosts shared;
         };
       };
     };
@@ -178,16 +178,16 @@ in {
       inherit (cfg.darwin) hosts;
       defaults = options.defaults.darwin;
       modules = {
-        config = crawlModuleDir cfg.darwin.configModulesDirectory;
-        system = crawlModuleDir cfg.darwin.sharedModulesDirectory;
-        global = crawlModuleDir cfg.globalModulesDirectory;
         users = crawlModuleDir cfg.usersModulesDirectory;
+        hosts = crawlModuleDir cfg.darwin.configModulesDirectory;
+        shared = crawlModuleDir cfg.darwin.sharedModulesDirectory;
+        global = crawlModuleDir cfg.globalModulesDirectory;
       };
       imports = with cfg.imports; {
         inherit overlays;
         modules = {
           inherit (modules) global users;
-          inherit (modules.darwin) config system;
+          inherit (modules.darwin) hosts shared;
         };
       };
     };
@@ -196,16 +196,16 @@ in {
       inherit (cfg.nixos) hosts;
       defaults = options.defaults.nixos;
       modules = {
-        config = crawlModuleDir cfg.nixos.configModulesDirectory;
-        system = crawlModuleDir cfg.nixos.sharedModulesDirectory;
-        global = crawlModuleDir cfg.globalModulesDirectory;
         users = crawlModuleDir cfg.usersModulesDirectory;
+        hosts = crawlModuleDir cfg.nixos.configModulesDirectory;
+        shared = crawlModuleDir cfg.nixos.sharedModulesDirectory;
+        global = crawlModuleDir cfg.globalModulesDirectory;
       };
       imports = with cfg.imports; {
         inherit overlays;
         modules = {
           inherit (modules) global users;
-          inherit (modules.nixos) config system;
+          inherit (modules.nixos) hosts shared;
         };
       };
     };
@@ -214,16 +214,16 @@ in {
       inherit (cfg) overlays;
       modules = {
         home = {
-          config = crawlModuleDir cfg.home.configModulesDirectory;
-          system = crawlModuleDir cfg.home.sharedModulesDirectory;
+          hosts = crawlModuleDir cfg.home.configModulesDirectory;
+          shared = crawlModuleDir cfg.home.sharedModulesDirectory;
         };
         darwin = {
-          config = crawlModuleDir cfg.darwin.configModulesDirectory;
-          system = crawlModuleDir cfg.darwin.sharedModulesDirectory;
+          hosts = crawlModuleDir cfg.darwin.configModulesDirectory;
+          shared = crawlModuleDir cfg.darwin.sharedModulesDirectory;
         };
         nixos = {
-          config = crawlModuleDir cfg.nixos.configModulesDirectory;
-          system = crawlModuleDir cfg.nixos.sharedModulesDirectory;
+          hosts = crawlModuleDir cfg.nixos.configModulesDirectory;
+          shared = crawlModuleDir cfg.nixos.sharedModulesDirectory;
         };
         global = crawlModuleDir cfg.globalModulesDirectory;
         users = crawlModuleDir cfg.usersModulesDirectory;
