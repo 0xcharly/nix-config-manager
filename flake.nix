@@ -39,6 +39,8 @@
         ./flake/devshells.nix
       ];
 
+      systems = ["aarch64-darwin" "aarch64-linux" "x86_64-linux"];
+
       flake = {
         flakeModule = ./flake/config-manager.nix;
       };
