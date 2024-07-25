@@ -51,7 +51,6 @@
         lib.throwIfNot (builtins.elem system supportedSystems) "Unsupported system '${system}'" expr;
     in
       throwForUnsupportedSystems (requireHomeManagerInput.lib.homeManagerConfiguration {
-        pkgs = import requireNixpkgsInput {inherit system;};
         extraSpecialArgs = {
           inherit inputs;
           globalModules = modules.global // imports.modules.global;
