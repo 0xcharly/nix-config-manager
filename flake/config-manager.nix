@@ -63,7 +63,7 @@
         # TODO: contribute support, or find an alternative.
         # backupFileExtension = cfg.backupFileExtension;
         modules = [
-          # System options.
+          # Install overlays.
           {nixpkgs.overlays = cfg.overlays ++ imports.overlays;}
 
           # Default home-manager shared module, if any.
@@ -107,7 +107,7 @@
           sharedModules = modules.shared // imports.modules.shared;
         };
         modules = [
-          # System options.
+          # Install overlays.
           {nixpkgs.overlays = cfg.overlays ++ imports.overlays;}
 
           # Default system shared module, if any.
@@ -134,6 +134,9 @@
             home-manager.backupFileExtension = cfg.backupFileExtension;
             # TODO: consider failing if the user configuration and default are both missing.
             home-manager.users.${user}.imports = [
+              # Install overlays.
+              {nixpkgs.overlays = cfg.overlays ++ imports.overlays;}
+
               modules.users.${user} or modules.users.default or {}
               imports.modules.users.${user} or imports.modules.users.default or {}
             ];
