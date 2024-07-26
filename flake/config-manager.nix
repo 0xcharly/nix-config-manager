@@ -129,8 +129,6 @@
               inherit inputs;
               globalModules = modules.global // imports.modules.global;
             };
-            home-manager.useGlobalPkgs = true;
-            home-manager.useUserPackages = true;
             home-manager.backupFileExtension = cfg.backupFileExtension;
             # TODO: consider failing if the user configuration and default are both missing.
             home-manager.users.${user}.imports = [
