@@ -132,12 +132,10 @@
               globalModules = modules.global // imports.modules.global;
             };
             home-manager.backupFileExtension = cfg.backupFileExtension;
+            home-manager.useGlobalPkgs = true;
             home-manager.useUserPackages = true;
             # TODO: consider failing if the user configuration is missing.
             home-manager.users.${user}.imports = [
-              # Install overlays.
-              {nixpkgs.overlays = cfg.overlays ++ imports.overlays;}
-
               modules.users.${user} or {}
               modules.users.default or {}
               imports.modules.users.${user} or {}
