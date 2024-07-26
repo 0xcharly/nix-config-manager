@@ -130,6 +130,7 @@
               globalModules = modules.global // imports.modules.global;
             };
             home-manager.backupFileExtension = cfg.backupFileExtension;
+            home-manager.useUserPackages = true;
             # TODO: consider failing if the user configuration and default are both missing.
             home-manager.users.${user}.imports = [
               # Install overlays.
