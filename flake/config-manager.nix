@@ -79,9 +79,11 @@
           imports.modules.hosts.default or {}
 
           # User configuration.
-          # TODO: consider failing if the user configuration and default are both missing.
-          modules.users.${user} or modules.users.default or {}
-          imports.modules.users.${user} or imports.modules.users.default or {}
+          # TODO: consider failing if the user configuration is missing.
+          modules.users.${user} or {}
+          modules.users.default or {}
+          imports.modules.users.${user} or {}
+          imports.modules.users.default or {}
         ];
       }))
     modules.hosts;
@@ -131,13 +133,15 @@
             };
             home-manager.backupFileExtension = cfg.backupFileExtension;
             home-manager.useUserPackages = true;
-            # TODO: consider failing if the user configuration and default are both missing.
+            # TODO: consider failing if the user configuration is missing.
             home-manager.users.${user}.imports = [
               # Install overlays.
               {nixpkgs.overlays = cfg.overlays ++ imports.overlays;}
 
-              modules.users.${user} or modules.users.default or {}
-              imports.modules.users.${user} or imports.modules.users.default or {}
+              modules.users.${user} or {}
+              modules.users.default or {}
+              imports.modules.users.${user} or {}
+              imports.modules.users.default or {}
             ];
           }
         ];
