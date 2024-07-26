@@ -66,6 +66,11 @@
           # Install overlays.
           {nixpkgs.overlays = cfg.overlays ++ imports.overlays;}
 
+          # Default global module, if any.
+          modules.globals.default or {}
+          # Default imported global modules, if any.
+          imports.modules.globals.default or {}
+
           # Default home-manager shared module, if any.
           modules.shared.default or {}
           # Default imported home-manager shared module, if any.
@@ -112,6 +117,11 @@
           # Install overlays.
           {nixpkgs.overlays = cfg.overlays ++ imports.overlays;}
 
+          # Default global module, if any.
+          modules.globals.default or {}
+          # Default imported global modules, if any.
+          imports.modules.globals.default or {}
+
           # Default system shared module, if any.
           modules.shared.default or {}
           # Default imported system shared modules, if any.
@@ -136,6 +146,9 @@
             home-manager.useUserPackages = true;
             # TODO: consider failing if the user configuration is missing.
             home-manager.users.${user}.imports = [
+              modules.globals.default or {}
+              imports.modules.globals.default or {}
+
               modules.users.${user} or {}
               modules.users.default or {}
               imports.modules.users.${user} or {}
