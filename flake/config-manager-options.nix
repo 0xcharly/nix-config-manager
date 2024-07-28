@@ -139,6 +139,7 @@
       mkOption {
         default = {};
         type = types.attrsOf types.raw;
+        readOnly = true;
         internal = true;
         visible = false;
         inherit description;
@@ -147,6 +148,7 @@
     overlays = mkOption {
       default = [];
       type = types.listOf overlayType;
+      readOnly = true;
       internal = true;
       visible = false;
       description = ''
