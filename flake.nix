@@ -46,7 +46,7 @@
         ./flake/devshells.nix
       ];
 
-      systems = ["aarch64-darwin" "aarch64-linux" "x86_64-linux"];
+      systems = inputs.nixpkgs.lib.systems.flakeExposed;
 
       flake = {
         flakeModule = ./flake/config-manager.nix;
