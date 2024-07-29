@@ -137,7 +137,6 @@
   mkImportsOptions = let
     mkModuleDirectoryOption = description:
       mkOption {
-        default = {};
         type = types.attrsOf types.raw;
         readOnly = true;
         internal = true;
@@ -146,7 +145,6 @@
       };
   in {
     overlays = mkOption {
-      default = [];
       type = types.listOf overlayType;
       readOnly = true;
       internal = true;
