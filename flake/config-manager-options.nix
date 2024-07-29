@@ -138,7 +138,7 @@
     mkModuleDirectoryOption = description:
       mkOption {
         type = types.attrsOf types.raw;
-        readOnly = true;
+        default = {};
         internal = true;
         visible = false;
         inherit description;
@@ -146,7 +146,7 @@
   in {
     overlays = mkOption {
       type = types.listOf overlayType;
-      readOnly = true;
+      default = [];
       internal = true;
       visible = false;
       description = ''
