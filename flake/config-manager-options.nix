@@ -226,8 +226,8 @@ in {
     };
 
     globalModulesDirectory = mkOption {
-      default = "${requireConfigRoot}/globals";
-      defaultText = lib.literalExpression "\"\${config-manager.root}/globals\"";
+      default = "${requireConfigRoot}/modules";
+      defaultText = lib.literalExpression "\"\${config-manager.root}/modules\"";
       type = types.pathInStore;
       description = ''
         The directory containing modules shared with all configurations.
