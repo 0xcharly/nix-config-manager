@@ -38,7 +38,7 @@
       configModulesDirectory = mkOption {
         default = "${requireConfigRoot}/hosts/${prefix}-configs";
         defaultText = lib.literalExpression "\"\${config-manager.root}/hosts/${prefix}-configs\"";
-        type = types.pathInStore;
+        type = types.path;
         description = ''
           The directory containing configuration modules for ${prefix}.
         '';
@@ -47,7 +47,7 @@
       sharedModulesDirectory = mkOption {
         default = "${requireConfigRoot}/hosts/${prefix}-modules";
         defaultText = lib.literalExpression "\"\${config-manager.root}/hosts/${prefix}-modules\"";
-        type = types.pathInStore;
+        type = types.path;
         description = ''
           The directory containing shared modules for ${prefix}.
         '';
@@ -178,7 +178,7 @@
 in {
   config-manager = {
     root = mkOption {
-      type = types.pathInStore;
+      type = types.path;
       example = lib.literalExpression "./.";
       description = ''
         The root from which configurations and modules should be searched.
@@ -228,7 +228,7 @@ in {
     globalModulesDirectory = mkOption {
       default = "${requireConfigRoot}/modules";
       defaultText = lib.literalExpression "\"\${config-manager.root}/modules\"";
-      type = types.pathInStore;
+      type = types.path;
       description = ''
         The directory containing modules shared with all configurations.
       '';
@@ -237,7 +237,7 @@ in {
     usersModulesDirectory = mkOption {
       default = "${requireConfigRoot}/users";
       defaultText = lib.literalExpression "\"\${config-manager.root}/users\"";
-      type = types.pathInStore;
+      type = types.path;
       description = ''
         The directory containing user configuration modules shared with all systems.
       '';
