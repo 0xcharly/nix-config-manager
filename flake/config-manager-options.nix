@@ -44,7 +44,7 @@
         '';
       };
 
-      sharedModulesDirectory = mkOption {
+      systemModulesDirectory = mkOption {
         default = "${requireConfigRoot}/hosts/${prefix}-modules";
         defaultText = lib.literalExpression "\"\${config-manager.root}/hosts/${prefix}-modules\"";
         type = types.path;
