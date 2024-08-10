@@ -135,14 +135,12 @@
   };
 
   mkImportsOptions = let
-    mkModuleDirectoryOption = description:
-      mkOption {
-        type = types.attrsOf types.raw;
-        default = {};
-        internal = true;
-        visible = false;
-        inherit description;
-      };
+    mkModuleDirectoryOption = mkOption {
+      type = types.attrsOf types.raw;
+      default = {};
+      internal = true;
+      visible = false;
+    };
   in {
     overlays = mkOption {
       type = types.listOf overlayType;
@@ -155,19 +153,19 @@
     };
     modules = {
       home = {
-        hosts = mkModuleDirectoryOption ''TODO'';
-        shared = mkModuleDirectoryOption ''TODO'';
+        hosts = mkModuleDirectoryOption;
+        system = mkModuleDirectoryOption;
       };
       darwin = {
-        hosts = mkModuleDirectoryOption ''TODO'';
-        shared = mkModuleDirectoryOption ''TODO'';
+        hosts = mkModuleDirectoryOption;
+        system = mkModuleDirectoryOption;
       };
       nixos = {
-        hosts = mkModuleDirectoryOption ''TODO'';
-        shared = mkModuleDirectoryOption ''TODO'';
+        hosts = mkModuleDirectoryOption;
+        system = mkModuleDirectoryOption;
       };
-      global = mkModuleDirectoryOption ''TODO'';
-      users = mkModuleDirectoryOption ''TODO'';
+      global = mkModuleDirectoryOption;
+      users = mkModuleDirectoryOption;
     };
   };
 

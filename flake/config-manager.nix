@@ -57,8 +57,10 @@
         };
         extraSpecialArgs = {
           inherit inputs;
-          globalModules = modules.global // imports.modules.global;
-          sharedModules = modules.shared // imports.modules.shared;
+          config-manager = {
+            global = modules.global // imports.modules.global;
+            system = modules.system // imports.modules.system;
+          };
         };
         # NOTE: automatically backing up existing files is currently unsupported
         # for standalone home-manager setups.
@@ -76,9 +78,9 @@
           imports.modules.global.default or {}
 
           # Default home-manager shared module, if any.
-          modules.shared.default or {}
+          modules.system.default or {}
           # Default imported home-manager shared module, if any.
-          imports.modules.shared.default or {}
+          imports.modules.system.default or {}
 
           # home-manager configuration.
           hostModule
@@ -114,8 +116,10 @@
       mkSystem {
         specialArgs = {
           inherit inputs host;
-          globalModules = modules.global // imports.modules.global;
-          sharedModules = modules.shared // imports.modules.shared;
+          config-manager = {
+            global = modules.global // imports.modules.global;
+            system = modules.system // imports.modules.system;
+          };
         };
         modules = [
           # Install overlays.
@@ -127,9 +131,9 @@
           imports.modules.global.default or {}
 
           # Default system shared module, if any.
-          modules.shared.default or {}
+          modules.system.default or {}
           # Default imported system shared modules, if any.
-          imports.modules.shared.default or {}
+          imports.modules.system.default or {}
 
           # System configuration.
           hostModule
@@ -143,7 +147,7 @@
           {
             home-manager.extraSpecialArgs = {
               inherit inputs;
-              globalModules = modules.global // imports.modules.global;
+              config-manager.global = modules.global // imports.modules.global;
             };
             home-manager.backupFileExtension = cfg.backupFileExtension;
             home-manager.useGlobalPkgs = true;
@@ -182,14 +186,14 @@ in {
       modules = {
         users = crawlModuleDir cfg.usersModulesDirectory;
         hosts = crawlModuleDir cfg.home.configModulesDirectory;
-        shared = crawlModuleDir cfg.home.sharedModulesDirectory;
+        system = crawlModuleDir cfg.home.systemModulesDirectory;
         global = crawlModuleDir cfg.globalModulesDirectory;
       };
       imports = with cfg.imports; {
         inherit overlays;
         modules = {
           inherit (modules) global users;
-          inherit (modules.home) hosts shared;
+          inherit (modules.home) hosts system;
         };
       };
     };
@@ -200,14 +204,14 @@ in {
       modules = {
         users = crawlModuleDir cfg.usersModulesDirectory;
         hosts = crawlModuleDir cfg.darwin.configModulesDirectory;
-        shared = crawlModuleDir cfg.darwin.sharedModulesDirectory;
+        system = crawlModuleDir cfg.darwin.systemModulesDirectory;
         global = crawlModuleDir cfg.globalModulesDirectory;
       };
       imports = with cfg.imports; {
         inherit overlays;
         modules = {
           inherit (modules) global users;
-          inherit (modules.darwin) hosts shared;
+          inherit (modules.darwin) hosts system;
         };
       };
     };
@@ -218,14 +222,14 @@ in {
       modules = {
         users = crawlModuleDir cfg.usersModulesDirectory;
         hosts = crawlModuleDir cfg.nixos.configModulesDirectory;
-        shared = crawlModuleDir cfg.nixos.sharedModulesDirectory;
+        system = crawlModuleDir cfg.nixos.systemModulesDirectory;
         global = crawlModuleDir cfg.globalModulesDirectory;
       };
       imports = with cfg.imports; {
         inherit overlays;
         modules = {
           inherit (modules) global users;
-          inherit (modules.nixos) hosts shared;
+          inherit (modules.nixos) hosts system;
         };
       };
     };
@@ -235,15 +239,15 @@ in {
       modules = {
         home = {
           hosts = crawlModuleDir cfg.home.configModulesDirectory;
-          shared = crawlModuleDir cfg.home.sharedModulesDirectory;
+          system = crawlModuleDir cfg.home.systemModulesDirectory;
         };
         darwin = {
           hosts = crawlModuleDir cfg.darwin.configModulesDirectory;
-          shared = crawlModuleDir cfg.darwin.sharedModulesDirectory;
+          system = crawlModuleDir cfg.darwin.systemModulesDirectory;
         };
         nixos = {
           hosts = crawlModuleDir cfg.nixos.configModulesDirectory;
-          shared = crawlModuleDir cfg.nixos.sharedModulesDirectory;
+          system = crawlModuleDir cfg.nixos.systemModulesDirectory;
         };
         global = crawlModuleDir cfg.globalModulesDirectory;
         users = crawlModuleDir cfg.usersModulesDirectory;
