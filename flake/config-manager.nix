@@ -51,10 +51,6 @@
         lib.throwIfNot (builtins.elem system supportedSystems) "Unsupported system '${system}'" expr;
     in
       throwForUnsupportedSystems (requireHomeManagerInput.lib.homeManagerConfiguration {
-        pkgs = import requireNixpkgsInput {
-          inherit system;
-          overlays = cfg.overlays ++ imports.overlays;
-        };
         extraSpecialArgs = {
           inherit inputs;
           config-manager = {
