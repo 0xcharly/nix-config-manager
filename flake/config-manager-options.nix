@@ -2,7 +2,7 @@
   config,
   lib,
 }: let
-  inherit (lib) mkOption mkOptionType types;
+  inherit (lib) mkOption types;
   cfg = config.config-manager;
 
   requireConfigRoot = lib.throwIfNot (cfg ? root) "config-manager.root must be set" cfg.root;
@@ -127,13 +127,6 @@
       };
     };
 
-  overlayType = mkOptionType {
-    name = "nixpkgs-overlay";
-    description = "nixpkgs overlay";
-    check = lib.isFunction;
-    merge = lib.mergeOneOption;
-  };
-
   mkImportsOptions = let
     mkModuleDirectoryOption = mkOption {
       type = types.attrsOf types.raw;
@@ -142,15 +135,6 @@
       visible = false;
     };
   in {
-    overlays = mkOption {
-      type = types.listOf overlayType;
-      default = [];
-      internal = true;
-      visible = false;
-      description = ''
-        The list of overlays to carry over and apply to the importing config.
-      '';
-    };
     modules = {
       home = {
         hosts = mkModuleDirectoryOption;
@@ -195,15 +179,6 @@ in {
     # TODO: what happens if there's multiple `default` modules defined, or
     # multiple modules of the same name for that matter?
     imports = mkImportsOptions;
-
-    overlays = mkOption {
-      default = [];
-      type = types.listOf overlayType;
-      description = ''
-        A list of nixpkgs overlays to apply to all configurations.
-        This option allows modifying the Nixpkgs package set accessed through the `pkgs` module argument.
-      '';
-    };
 
     defaultUser = mkOption {
       default = null;

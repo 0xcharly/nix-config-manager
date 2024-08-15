@@ -65,9 +65,6 @@
         # TODO: contribute support, or find an alternative.
         # backupFileExtension = cfg.backupFileExtension;
         modules = [
-          # Install overlays.
-          {nixpkgs.overlays = cfg.overlays ++ imports.overlays;}
-
           # Default global module, if any.
           modules.global.default or {}
           # Default imported global modules, if any.
@@ -118,9 +115,6 @@
           };
         };
         modules = [
-          # Install overlays.
-          {nixpkgs.overlays = cfg.overlays ++ imports.overlays;}
-
           # Default global module, if any.
           modules.global.default or {}
           # Default imported global modules, if any.
@@ -146,7 +140,7 @@
               config-manager.global = modules.global // imports.modules.global;
             };
             home-manager.backupFileExtension = cfg.backupFileExtension;
-            home-manager.useGlobalPkgs = true;
+            home-manager.useGlobalPkgs = false;
             home-manager.useUserPackages = true;
             # TODO: consider failing if the user configuration is missing.
             home-manager.users.${user}.imports = [
@@ -186,7 +180,6 @@ in {
         global = crawlModuleDir cfg.globalModulesDirectory;
       };
       imports = with cfg.imports; {
-        inherit overlays;
         modules = {
           inherit (modules) global users;
           inherit (modules.home) hosts system;
@@ -204,7 +197,6 @@ in {
         global = crawlModuleDir cfg.globalModulesDirectory;
       };
       imports = with cfg.imports; {
-        inherit overlays;
         modules = {
           inherit (modules) global users;
           inherit (modules.darwin) hosts system;
@@ -222,7 +214,6 @@ in {
         global = crawlModuleDir cfg.globalModulesDirectory;
       };
       imports = with cfg.imports; {
-        inherit overlays;
         modules = {
           inherit (modules) global users;
           inherit (modules.nixos) hosts system;
@@ -231,7 +222,6 @@ in {
     };
 
     config-manager = lib.mkIf (!cfg.final) {
-      inherit (cfg) overlays;
       modules = {
         home = {
           hosts = crawlModuleDir cfg.home.configModulesDirectory;
